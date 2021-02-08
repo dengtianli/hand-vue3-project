@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-const store = create({
+const store = createStore({
     state: {
         name: 'vuex',
         count:34,

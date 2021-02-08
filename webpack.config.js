@@ -10,19 +10,20 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserWebpackPlugin =require('terser-webpack-plugin')
 module.exports = {
     mode: 'development', //环境模式
-    entry: path.resolve(__dirname, './src/main.ts'),//打包入口
+    entry: path.resolve(__dirname, './src/main.js'),//打包入口
     output: {
         path: path.resolve(__dirname, 'dist'), //打包出口
-        filename:'js/[name].js' //打包完后的静态资源文件名
+        // filename: 'js/[name].js' //打包完后的静态资源文件名
+        filename: 'bundle.js'
     },
     module: {
         rules: [
-            {
-                test: /\.ts$/,
-                use: [
-                  'ts-loader'
-                ]
-            },
+            // {
+            //     test: /\.ts$/,
+            //     use: [
+            //       'ts-loader'
+            //     ]
+            // },
             {
                 test: '/\.js$/',
                 exclude: /node_modules/, // 不编译node_modules下的文件
@@ -40,7 +41,7 @@ module.exports = {
             {
                 test: '/\.css$/',
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    // MiniCssExtractPlugin.loader,
                     'style-loader',
                     'css-loader'
                 ]
@@ -48,7 +49,7 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                     MiniCssExtractPlugin.loader,
+                    //  MiniCssExtractPlugin.loader,
                     'style-loader',
                     'css-loader',
                     'less-loader'
@@ -84,27 +85,27 @@ module.exports = {
                     }
                 }
             },
-            {
-                loader: 'image-webpack-loader',
-                options: {
-                    mozjpeg: {
-                        progressive: true,
-                    },
-                    optipng: {
-                        enabled: false,
-                    },
-                    pngquant: {
-                        quality: [0.65, 0.90],
-                        speed: 4
-                    },
-                    gifsicle: {
-                        interlaced: false,
-                    },
-                    webp: {
-                        quality: 75
-                    }
-                }
-            }
+            // {
+            //     loader: 'image-webpack-loader',
+            //     options: {
+            //         mozjpeg: {
+            //             progressive: true,
+            //         },
+            //         optipng: {
+            //             enabled: false,
+            //         },
+            //         pngquant: {
+            //             quality: [0.65, 0.90],
+            //             speed: 4
+            //         },
+            //         gifsicle: {
+            //             interlaced: false,
+            //         },
+            //         webp: {
+            //             quality: 75
+            //         }
+            //     }
+            // }
                 
         ]
     },
@@ -119,15 +120,14 @@ module.exports = {
             template: path.resolve(__dirname, './public/index.html'), //我们要使用的html模板地址
             filename: 'index.html', //打包后输出的文件名
             title: '手搭Webpack5+Vue3开发环境', // index.html 模板内，通过 <%= htmlWebpackPlugin.options.title %> 拿到的变量
-            minify: {
-                collapseWhitespace: true,//去掉空格
-                removeComments: true,//去掉注释
-            }
+            // minify: {
+            //     collapseWhitespace: true,//去掉空格
+            //     removeComments: true,//去掉注释
+            // }
         }),
-        //添加vueLoaderPlugin 插件
+        new CleanWebpackPlugin(),
         new VueLoaderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new CleanWebpackPlugin(),
         //  new OptimizeCssAssetsWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename:'css/[name].css'
@@ -136,8 +136,13 @@ module.exports = {
     devServer: {
         contentBase: path.resolve(__dirname, './dist'),
         publicPath:'./',
-        port: 8080,
+        port: 8081,
         hot: true,
-        open:true
+        open: true,
+        proxy: {
+            'api': {
+                target: 'localhost:9090'
+            }
+        }
     }
 }
